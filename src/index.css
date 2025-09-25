@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "react-toastify/dist/ReactToastify.css";
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+  
+  body {
+    @apply font-inter text-gray-900 bg-gray-50 antialiased;
+  }
+  
+  html, body, #root {
+    @apply h-full;
+  }
+}
+
+@layer components {
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/90 border border-white/20;
+  }
+  
+  .card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .premium-gradient {
+    background: linear-gradient(135deg, #2d5016 0%, #3d9355 50%, #5bb177 100%);
+  }
+  
+  .accent-gradient {
+    background: linear-gradient(135deg, #ff8c00 0%, #ffa533 50%, #ffbe66 100%);
+  }
+  
+  .status-badge {
+    @apply px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .metric-card {
+    @apply bg-white rounded-xl card-shadow p-6 border border-gray-100;
+  }
+}
+
+/* Toast Overrides */
+.Toastify__toast-container {
+  @apply text-sm;
+}
+
+.Toastify__toast {
+  @apply rounded-lg shadow-lg;
+}
+
+.Toastify__toast--success {
+  @apply bg-green-50 text-green-900 border border-green-200;
+}
+
+.Toastify__toast--error {
+  @apply bg-red-50 text-red-900 border border-red-200;
+}
+
+.Toastify__toast--warning {
+  @apply bg-yellow-50 text-yellow-900 border border-yellow-200;
+}
+
+.Toastify__toast--info {
+  @apply bg-blue-50 text-blue-900 border border-blue-200;
+}

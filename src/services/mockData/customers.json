@@ -1,0 +1,121 @@
+[
+  {
+    "Id": 1,
+    "name": "John Thompson",
+    "phone": "+1-555-0123",
+    "email": "john.thompson@email.com",
+    "address": "123 Farm Road, Green Valley, TX 75001",
+    "farmSize": "50 acres",
+    "cropTypes": ["Corn", "Wheat", "Soybeans"],
+    "loyaltyPoints": 1250,
+    "totalPurchases": 12500.00,
+    "lastVisit": "2024-01-15T10:30:00Z",
+    "communicationLog": [
+      {
+        "date": "2024-01-15T10:30:00Z",
+        "type": "visit",
+        "notes": "Purchased fertilizer for spring planting"
+      },
+      {
+        "date": "2024-01-10T14:15:00Z",
+        "type": "call",
+        "notes": "Inquired about bulk seed pricing"
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "name": "Maria Garcia",
+    "phone": "+1-555-0456",
+    "email": "maria.garcia@email.com",
+    "address": "456 Ranch Drive, Meadowbrook, TX 75002",
+    "farmSize": "75 acres",
+    "cropTypes": ["Tomatoes", "Peppers", "Onions"],
+    "loyaltyPoints": 2100,
+    "totalPurchases": 18750.00,
+    "lastVisit": "2024-01-14T09:15:00Z",
+    "communicationLog": [
+      {
+        "date": "2024-01-14T09:15:00Z",
+        "type": "visit",
+        "notes": "Bought irrigation supplies and pesticides"
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "name": "Robert Miller",
+    "phone": "+1-555-0789",
+    "email": "robert.miller@email.com",
+    "address": "789 County Road 15, Plainview, TX 75003",
+    "farmSize": "120 acres",
+    "cropTypes": ["Cotton", "Corn"],
+    "loyaltyPoints": 3200,
+    "totalPurchases": 28900.00,
+    "lastVisit": "2024-01-13T16:45:00Z",
+    "communicationLog": [
+      {
+        "date": "2024-01-13T16:45:00Z",
+        "type": "visit",
+        "notes": "Large equipment purchase for harvest season"
+      }
+    ]
+  },
+  {
+    "Id": 4,
+    "name": "Sarah Johnson",
+    "phone": "+1-555-0321",
+    "email": "sarah.johnson@email.com",
+    "address": "321 Prairie Lane, Riverside, TX 75004",
+    "farmSize": "35 acres",
+    "cropTypes": ["Organic Vegetables", "Herbs"],
+    "loyaltyPoints": 890,
+    "totalPurchases": 7650.00,
+    "lastVisit": "2024-01-12T11:20:00Z",
+    "communicationLog": [
+      {
+        "date": "2024-01-12T11:20:00Z",
+        "type": "visit",
+        "notes": "Purchased organic seeds and soil amendments"
+      }
+    ]
+  },
+  {
+    "Id": 5,
+    "name": "David Wilson",
+    "phone": "+1-555-0654",
+    "email": "david.wilson@email.com",
+    "address": "654 Harvest Avenue, Farmington, TX 75005",
+    "farmSize": "200 acres",
+    "cropTypes": ["Wheat", "Barley", "Oats"],
+    "loyaltyPoints": 4500,
+    "totalPurchases": 45000.00,
+    "lastVisit": "2024-01-11T08:30:00Z",
+    "communicationLog": [
+      {
+        "date": "2024-01-11T08:30:00Z",
+        "type": "visit",
+        "notes": "Bulk purchase of grain seeds and fertilizer"
+      }
+    ]
+  },
+  {
+    "Id": 6,
+    "name": "Lisa Brown",
+    "phone": "+1-555-0987",
+    "email": "lisa.brown@email.com",
+    "address": "987 Orchard Street, Fruitland, TX 75006",
+    "farmSize": "25 acres",
+    "cropTypes": ["Apple", "Peach", "Cherry"],
+    "loyaltyPoints": 1680,
+    "totalPurchases": 15200.00,
+    "lastVisit": "2024-01-10T13:45:00Z",
+    "communicationLog": [
+      {
+        "date": "2024-01-10T13:45:00Z",
+        "type": "visit",
+        "notes": "Fruit tree care products and pruning tools"
+      }
+    ]
+  }
+]

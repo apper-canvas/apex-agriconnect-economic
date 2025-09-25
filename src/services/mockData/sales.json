@@ -1,0 +1,175 @@
+[
+  {
+    "Id": 1,
+    "customerId": "1",
+    "customerName": "John Thompson",
+    "items": [
+      {
+        "productId": "1",
+        "productName": "Premium Corn Seeds",
+        "quantity": 4,
+        "price": 125.50,
+        "total": 502.00
+      },
+      {
+        "productId": "2",
+        "productName": "NPK Fertilizer 20-20-20",
+        "quantity": 2,
+        "price": 45.99,
+        "total": 91.98
+      }
+    ],
+    "subtotal": 593.98,
+    "tax": 47.52,
+    "discount": 0.00,
+    "total": 641.50,
+    "paymentMethod": "Credit Card",
+    "paymentStatus": "Paid",
+    "orderDate": "2024-01-15T10:30:00Z",
+    "status": "Completed",
+    "notes": "Bulk purchase for spring planting"
+  },
+  {
+    "Id": 2,
+    "customerId": "2",
+    "customerName": "Maria Garcia",
+    "items": [
+      {
+        "productId": "4",
+        "productName": "Irrigation Sprinkler System",
+        "quantity": 2,
+        "price": 299.99,
+        "total": 599.98
+      },
+      {
+        "productId": "8",
+        "productName": "Insect Control Spray",
+        "quantity": 3,
+        "price": 56.99,
+        "total": 170.97
+      }
+    ],
+    "subtotal": 770.95,
+    "tax": 61.68,
+    "discount": 25.00,
+    "total": 807.63,
+    "paymentMethod": "Cash",
+    "paymentStatus": "Paid",
+    "orderDate": "2024-01-14T09:15:00Z",
+    "status": "Completed",
+    "notes": "Irrigation upgrade for vegetable farm"
+  },
+  {
+    "Id": 3,
+    "customerId": "3",
+    "customerName": "Robert Miller",
+    "items": [
+      {
+        "productId": "6",
+        "productName": "Wheat Seeds - Winter Variety",
+        "quantity": 10,
+        "price": 95.75,
+        "total": 957.50
+      }
+    ],
+    "subtotal": 957.50,
+    "tax": 76.60,
+    "discount": 50.00,
+    "total": 984.10,
+    "paymentMethod": "Check",
+    "paymentStatus": "Paid",
+    "orderDate": "2024-01-13T16:45:00Z",
+    "status": "Completed",
+    "notes": "Large order for winter wheat planting"
+  },
+  {
+    "Id": 4,
+    "customerId": "4",
+    "customerName": "Sarah Johnson",
+    "items": [
+      {
+        "productId": "11",
+        "productName": "Tomato Seeds - Hybrid",
+        "quantity": 5,
+        "price": 18.99,
+        "total": 94.95
+      },
+      {
+        "productId": "7",
+        "productName": "Organic Compost",
+        "quantity": 8,
+        "price": 28.50,
+        "total": 228.00
+      }
+    ],
+    "subtotal": 322.95,
+    "tax": 25.84,
+    "discount": 0.00,
+    "total": 348.79,
+    "paymentMethod": "Debit Card",
+    "paymentStatus": "Paid",
+    "orderDate": "2024-01-12T11:20:00Z",
+    "status": "Completed",
+    "notes": "Organic farming supplies"
+  },
+  {
+    "Id": 5,
+    "customerId": "5",
+    "customerName": "David Wilson",
+    "items": [
+      {
+        "productId": "1",
+        "productName": "Premium Corn Seeds",
+        "quantity": 8,
+        "price": 125.50,
+        "total": 1004.00
+      },
+      {
+        "productId": "2",
+        "productName": "NPK Fertilizer 20-20-20",
+        "quantity": 15,
+        "price": 45.99,
+        "total": 689.85
+      }
+    ],
+    "subtotal": 1693.85,
+    "tax": 135.51,
+    "discount": 100.00,
+    "total": 1729.36,
+    "paymentMethod": "Credit Card",
+    "paymentStatus": "Pending",
+    "orderDate": "2024-01-11T08:30:00Z",
+    "status": "Processing",
+    "notes": "Large farm operation - payment processing"
+  },
+  {
+    "Id": 6,
+    "customerId": "6",
+    "customerName": "Lisa Brown",
+    "items": [
+      {
+        "productId": "5",
+        "productName": "Steel Garden Hoe",
+        "quantity": 2,
+        "price": 34.99,
+        "total": 69.98
+      },
+      {
+        "productId": "12",
+        "productName": "Soil pH Test Kit",
+        "quantity": 1,
+        "price": 24.95,
+        "total": 24.95
+      }
+    ],
+    "subtotal": 94.93,
+    "tax": 7.59,
+    "discount": 5.00,
+    "total": 97.52,
+    "paymentMethod": "Cash",
+    "paymentStatus": "Paid",
+    "orderDate": "2024-01-10T13:45:00Z",
+    "status": "Completed",
+    "notes": "Orchard maintenance tools"
+  }
+]
