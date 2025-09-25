@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { useSelector } from 'react-redux';
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
 import ApperIcon from "@/components/ApperIcon";
 import { useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "../../App";
 
 const Header = ({ onMobileMenuToggle }) => {
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useContext(AuthContext);
+  const user = useSelector((state) => state.user.user);
 
   const getPageTitle = (pathname) => {
     const titles = {
@@ -26,6 +30,14 @@ const Header = ({ onMobileMenuToggle }) => {
     console.log("Searching for:", query);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
       <div className="flex items-center justify-between">
@@ -42,7 +54,7 @@ const Header = ({ onMobileMenuToggle }) => {
               {getPageTitle(location.pathname)}
             </h1>
             <p className="text-sm text-gray-600">
-              Welcome back, manage your agricultural store efficiently
+              Welcome back {user?.firstName || 'User'}, manage your agricultural store efficiently
             </p>
           </div>
         </div>
@@ -61,6 +73,16 @@ const Header = ({ onMobileMenuToggle }) => {
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent-500 text-white text-xs rounded-full flex items-center justify-center">
                 3
               </span>
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              icon="LogOut" 
+              onClick={handleLogout}
+              className="text-red-600 hover:bg-red-50"
+            >
+              Logout
             </Button>
             
             <div className="w-8 h-8 premium-gradient rounded-lg flex items-center justify-center">
