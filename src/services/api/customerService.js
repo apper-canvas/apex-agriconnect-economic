@@ -161,6 +161,10 @@ communicationLog: []
 try {
           // Send welcome email via Edge function
           const { ApperClient } = window.ApperSDK;
+          const apperClient = new ApperClient({
+            apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+            apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+          });
           const emailResponse = await ApperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
             body: customerResult,
             headers: {
@@ -184,9 +188,13 @@ try {
           customerResult.emailMessage = 'Failed to send welcome email';
         }
 
-        // Send welcome SMS via Edge function
+// Send welcome SMS via Edge function
         try {
           const { ApperClient } = window.ApperSDK;
+          const apperClient = new ApperClient({
+            apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+            apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+          });
           const smsResponse = await ApperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS, {
             body: customerResult,
             headers: {
