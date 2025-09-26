@@ -257,7 +257,7 @@ class ProductService {
 
   async getLowStockProducts() {
     try {
-      const params = {
+const params = {
         fields: [
           {"field": {"Name": "Name"}},
           {"field": {"Name": "name_c"}},
@@ -270,18 +270,7 @@ class ProductService {
           {"field": {"Name": "supplier_c"}},
           {"field": {"Name": "description_c"}},
           {"field": {"Name": "unit_c"}}
-        ],
-        whereGroups: [{
-          "operator": "OR",
-          "subGroups": [
-            {
-              "conditions": [
-                {"fieldName": "stock_quantity_c", "operator": "LessThanOrEqualTo", "values": ["min_stock_level_c"]}
-              ],
-              "operator": "OR"
-            }
-          ]
-        }]
+        ]
       };
 
       const response = await this.apperClient.fetchRecords(this.tableName, params);
