@@ -100,10 +100,17 @@ const handleCreateCustomer = async (e) => {
       toast.success("Customer created successfully!");
       
       // Show separate email status notification
-      if (newCustomer.emailStatus === 'sent') {
-        toast.success(`Welcome email sent to ${newCustomer.email}`);
+// Show communication status feedback
+      if (newCustomer.emailStatus === 'sent' && newCustomer.smsStatus === 'sent') {
+        toast.success(`Welcome email and SMS sent successfully to ${newCustomer.email} and ${newCustomer.phone}`);
+      } else if (newCustomer.emailStatus === 'sent' && newCustomer.smsStatus === 'failed') {
+        toast.warning(`Welcome email sent to ${newCustomer.email}, but SMS failed: ${newCustomer.smsMessage}`);
+      } else if (newCustomer.emailStatus === 'sent' && newCustomer.smsStatus === 'not_sent') {
+        toast.success(`Welcome email sent to ${newCustomer.email} (SMS not sent - no phone number)`);
       } else if (newCustomer.emailStatus === 'failed') {
-        toast.warning(`Customer created but email delivery failed: ${newCustomer.emailMessage}`);
+        toast.error(`Customer created but welcome email failed: ${newCustomer.emailMessage}`);
+      } else {
+        toast.success('Customer created successfully');
       }
     } catch (err) {
       toast.error("Failed to create customer");

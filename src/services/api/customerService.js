@@ -167,12 +167,14 @@ try {
               'Content-Type': 'application/json'
             }
           });
-          
-          if (emailResponse.ok) {
+if (emailResponse.ok) {
             const emailResult = await emailResponse.json();
-            // Add email status to customer result for UI feedback
+            // Add email and SMS status to customer result for UI feedback
             customerResult.emailStatus = emailResult.success ? 'sent' : 'failed';
             customerResult.emailMessage = emailResult.message;
+            customerResult.smsStatus = emailResult.smsStatus || 'not_sent';
+            customerResult.smsMessage = emailResult.smsMessage || 'SMS not attempted';
+            customerResult.communicationSummary = emailResult.communicationSummary || emailResult.message;
           }
         } catch (emailError) {
           console.error('Email sending failed:', emailError);
