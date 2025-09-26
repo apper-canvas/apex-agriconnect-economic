@@ -155,28 +155,24 @@ async create(customerData) {
           loyaltyPoints: newCustomer.loyalty_points_c || 0,
           totalPurchases: newCustomer.total_purchases_c || 0.00,
           lastVisit: newCustomer.last_visit_c || null,
-          communicationLog: []
-        };
+communicationLog: []
+      };
 
-        // Send welcome email after successful customer creation (non-blocking)
         try {
-const emailResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
-            body: {
-              name: customerResult.name,
-              email: customerResult.email,
-              phone: customerResult.phone,
-              address: customerResult.address,
-              farmSize: customerResult.farmSize
-            },
+          // Send welcome email via Edge function
+          const emailResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
+            body: JSON.stringify(customerResult),
             headers: {
               'Content-Type': 'application/json'
             }
           });
-
-          const emailResult = await emailResponse.json();
-          // Add email status to customer result for UI feedback
-          customerResult.emailStatus = emailResult.success ? 'sent' : 'failed';
-          customerResult.emailMessage = emailResult.message;
+          
+          if (emailResponse.ok) {
+            const emailResult = await emailResponse.json();
+            // Add email status to customer result for UI feedback
+            customerResult.emailStatus = emailResult.success ? 'sent' : 'failed';
+            customerResult.emailMessage = emailResult.message;
+          }
         } catch (emailError) {
           console.error('Email sending failed:', emailError);
           // Don't throw error - customer creation should still succeed
