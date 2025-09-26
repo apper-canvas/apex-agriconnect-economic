@@ -153,19 +153,14 @@ async create(customerData) {
           farmSize: newCustomer.farm_size_c || '',
           cropTypes: newCustomer.crop_types_c ? newCustomer.crop_types_c.split(',').map(c => c.trim()).filter(c => c) : [],
           loyaltyPoints: newCustomer.loyalty_points_c || 0,
-          totalPurchases: newCustomer.total_purchases_c || 0.00,
+totalPurchases: newCustomer.total_purchases_c || 0.00,
           lastVisit: newCustomer.last_visit_c || null,
-communicationLog: []
-      };
+          communicationLog: []
+        };
 
-try {
+        try {
           // Send welcome email via Edge function
-          const { ApperClient } = window.ApperSDK;
-          const apperClient = new ApperClient({
-            apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-            apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-          });
-const emailResponse = await apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
+          const emailResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
             body: customerResult,
             headers: {
               'Content-Type': 'application/json'
@@ -188,14 +183,9 @@ const emailResponse = await apperClient.functions.invoke(import.meta.env.VITE_SE
           customerResult.emailMessage = 'Failed to send welcome email';
         }
 
-// Send welcome SMS via Edge function
+        // Send welcome SMS via Edge function
         try {
-          const { ApperClient } = window.ApperSDK;
-          const apperClient = new ApperClient({
-            apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-            apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-          });
-const smsResponse = await apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS, {
+          const smsResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS, {
             body: customerResult,
             headers: {
               'Content-Type': 'application/json'
