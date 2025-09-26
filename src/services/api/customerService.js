@@ -158,10 +158,11 @@ async create(customerData) {
 communicationLog: []
       };
 
-        try {
+try {
           // Send welcome email via Edge function
-          const emailResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
-            body: JSON.stringify(customerResult),
+          const { ApperClient } = window.ApperSDK;
+          const emailResponse = await ApperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
+            body: customerResult,
             headers: {
               'Content-Type': 'application/json'
             }
