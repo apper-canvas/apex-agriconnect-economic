@@ -111,7 +111,7 @@ class CustomerService {
     }
   }
 
-  async create(customerData) {
+async create(customerData) {
     try {
       // Only include Updateable fields in create operation
       const records = [{
@@ -144,7 +144,7 @@ class CustomerService {
         }
 
         const newCustomer = result.data;
-        return {
+        const customerResult = {
           Id: newCustomer.Id,
           name: newCustomer.name_c || newCustomer.Name || '',
           phone: newCustomer.phone_c || '',
@@ -157,6 +157,35 @@ class CustomerService {
           lastVisit: newCustomer.last_visit_c || null,
           communicationLog: []
         };
+
+        // Send welcome email after successful customer creation (non-blocking)
+        try {
+          const emailResponse = await fetch(`https://test-apper.app/api/v1/apps/${import.meta.env.VITE_APPER_PROJECT_ID}/functions/send-customer-welcome-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: customerResult.name,
+              email: customerResult.email,
+              phone: customerResult.phone,
+              address: customerResult.address,
+              farmSize: customerResult.farmSize
+            })
+          });
+
+          const emailResult = await emailResponse.json();
+          // Add email status to customer result for UI feedback
+          customerResult.emailStatus = emailResult.success ? 'sent' : 'failed';
+          customerResult.emailMessage = emailResult.message;
+        } catch (emailError) {
+          console.error('Email sending failed:', emailError);
+          // Don't throw error - customer creation should still succeed
+          customerResult.emailStatus = 'failed';
+          customerResult.emailMessage = 'Failed to send welcome email';
+        }
+
+        return customerResult;
       }
 
       throw new Error("No response data received");

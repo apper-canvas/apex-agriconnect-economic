@@ -70,7 +70,7 @@ const Customers = () => {
     }
   }, [searchQuery, customers]);
 
-  const handleCreateCustomer = async (e) => {
+const handleCreateCustomer = async (e) => {
     e.preventDefault();
     try {
       if (!formData.name.trim() || !formData.phone.trim() || !formData.email.trim()) {
@@ -95,7 +95,16 @@ const Customers = () => {
       });
       setCropInput("");
       setShowModal(false);
+      
+      // Show customer creation success
       toast.success("Customer created successfully!");
+      
+      // Show separate email status notification
+      if (newCustomer.emailStatus === 'sent') {
+        toast.success(`Welcome email sent to ${newCustomer.email}`);
+      } else if (newCustomer.emailStatus === 'failed') {
+        toast.warning(`Customer created but email delivery failed: ${newCustomer.emailMessage}`);
+      }
     } catch (err) {
       toast.error("Failed to create customer");
     }
