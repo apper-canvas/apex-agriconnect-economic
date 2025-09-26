@@ -167,20 +167,47 @@ try {
               'Content-Type': 'application/json'
             }
           });
-if (emailResponse.ok) {
+
+          if (emailResponse.ok) {
             const emailResult = await emailResponse.json();
-            // Add email and SMS status to customer result for UI feedback
+            // Add email status to customer result for UI feedback
             customerResult.emailStatus = emailResult.success ? 'sent' : 'failed';
             customerResult.emailMessage = emailResult.message;
-            customerResult.smsStatus = emailResult.smsStatus || 'not_sent';
-            customerResult.smsMessage = emailResult.smsMessage || 'SMS not attempted';
-            customerResult.communicationSummary = emailResult.communicationSummary || emailResult.message;
+          } else {
+            customerResult.emailStatus = 'failed';
+            customerResult.emailMessage = 'Failed to send welcome email';
           }
         } catch (emailError) {
           console.error('Email sending failed:', emailError);
           // Don't throw error - customer creation should still succeed
           customerResult.emailStatus = 'failed';
           customerResult.emailMessage = 'Failed to send welcome email';
+        }
+
+        // Send welcome SMS via Edge function
+        try {
+          const { ApperClient } = window.ApperSDK;
+          const smsResponse = await ApperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS, {
+            body: customerResult,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (smsResponse.ok) {
+            const smsResult = await smsResponse.json();
+            // Add SMS status to customer result for UI feedback
+            customerResult.smsStatus = smsResult.smsStatus || (smsResult.success ? 'sent' : 'failed');
+            customerResult.smsMessage = smsResult.smsMessage || smsResult.message;
+          } else {
+            customerResult.smsStatus = 'failed';
+            customerResult.smsMessage = 'Failed to send welcome SMS';
+          }
+        } catch (smsError) {
+          console.info(`apper_info: An error was received in this function: ${import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS}. The error is: ${smsError.message}`);
+          // Don't throw error - customer creation should still succeed
+          customerResult.smsStatus = 'failed';
+          customerResult.smsMessage = 'Failed to send welcome SMS';
         }
 
         return customerResult;
