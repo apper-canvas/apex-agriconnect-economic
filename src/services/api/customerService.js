@@ -160,18 +160,17 @@ async create(customerData) {
 
         // Send welcome email after successful customer creation (non-blocking)
         try {
-          const emailResponse = await fetch(`https://test-apper.app/api/v1/apps/${import.meta.env.VITE_APPER_PROJECT_ID}/functions/send-customer-welcome-email`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+const emailResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
+            body: {
               name: customerResult.name,
               email: customerResult.email,
               phone: customerResult.phone,
               address: customerResult.address,
               farmSize: customerResult.farmSize
-            })
+            },
+            headers: {
+              'Content-Type': 'application/json'
+            }
           });
 
           const emailResult = await emailResponse.json();
