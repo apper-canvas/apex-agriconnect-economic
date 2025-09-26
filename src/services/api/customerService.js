@@ -113,20 +113,21 @@ class CustomerService {
 
 async create(customerData) {
     try {
-      // Only include Updateable fields in create operation
-      const records = [{
-        Name: customerData.name || '',
-        name_c: customerData.name || '',
-        phone_c: customerData.phone || '',
-        email_c: customerData.email || '',
-        address_c: customerData.address || '',
-        farm_size_c: customerData.farmSize || '',
-        crop_types_c: Array.isArray(customerData.cropTypes) ? customerData.cropTypes.join(', ') : '',
-        loyalty_points_c: 0,
-        total_purchases_c: 0.00,
-        last_visit_c: new Date().toISOString(),
-        communication_log_c: JSON.stringify([])
-      }];
+      // Prepare customer data with only updateable fields
+      const customerRecord = {};
+      const updateableFields = [
+        'Name', 'Tags', 'email_c', 'phone_c', 'address_c', 
+        'city_c', 'state_c', 'zip_c', 'country_c', 'crop_types_c', 
+        'farm_size_c', 'primary_contact_c', 'preferred_language_c'
+      ];
+
+      updateableFields.forEach(field => {
+        if (customerData[field] !== undefined && customerData[field] !== null && customerData[field] !== '') {
+          customerRecord[field] = customerData[field];
+        }
+      });
+
+      const records = [customerRecord];
 
       const response = await this.apperClient.createRecord(this.tableName, { records });
 
@@ -135,85 +136,130 @@ async create(customerData) {
         throw new Error(response.message);
       }
 
-      if (response.results && response.results.length > 0) {
-        const result = response.results[0];
-        if (!result.success) {
-          const errorMessage = result.message || "Failed to create customer";
-          console.error(errorMessage);
-          throw new Error(errorMessage);
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} customer records:`, failed);
+          failed.forEach(record => {
+            if (record.errors) {
+              record.errors.forEach(error => console.error(`Customer creation error - ${error.fieldLabel}: ${error.message}`));
+            }
+            if (record.message) console.error(`Customer creation error: ${record.message}`);
+          });
+          throw new Error('Failed to create customer');
         }
 
-        const newCustomer = result.data;
-        const customerResult = {
-          Id: newCustomer.Id,
-          name: newCustomer.name_c || newCustomer.Name || '',
-          phone: newCustomer.phone_c || '',
-          email: newCustomer.email_c || '',
-          address: newCustomer.address_c || '',
-          farmSize: newCustomer.farm_size_c || '',
-          cropTypes: newCustomer.crop_types_c ? newCustomer.crop_types_c.split(',').map(c => c.trim()).filter(c => c) : [],
-          loyaltyPoints: newCustomer.loyalty_points_c || 0,
-totalPurchases: newCustomer.total_purchases_c || 0.00,
-          lastVisit: newCustomer.last_visit_c || null,
-          communicationLog: []
-        };
+        if (successful.length > 0) {
+          const result = successful[0];
+          const newCustomer = result.data;
 
-        try {
-          // Send welcome email via Edge function
-          const emailResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
-            body: customerResult,
-            headers: {
-              'Content-Type': 'application/json'
+          // Auto-create contact with same information
+          let contactCreated = false;
+          let contactError = null;
+
+          try {
+            // Import contactService for contact creation
+            const { ApperClient } = window.ApperSDK;
+            const apperClient = new ApperClient({
+              apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+              apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+            });
+
+            // Prepare contact data from customer information
+            const contactRecord = {};
+            
+            // Map customer fields to contact fields using exact schema field names
+            if (newCustomer.Name) {
+              contactRecord.Name = newCustomer.Name;
+              // Split name into first and last if possible
+              const nameParts = newCustomer.Name.split(' ');
+              if (nameParts.length >= 2) {
+                contactRecord.first_name_c = nameParts[0];
+                contactRecord.last_name_c = nameParts.slice(1).join(' ');
+              } else {
+                contactRecord.first_name_c = newCustomer.Name;
+              }
             }
-          });
 
-          if (emailResponse.ok) {
-            const emailResult = await emailResponse.json();
-            // Add email status to customer result for UI feedback
-            customerResult.emailStatus = emailResult.success ? 'sent' : 'failed';
-            customerResult.emailMessage = emailResult.message;
-          } else {
+            if (newCustomer.phone_c) contactRecord.phone_c = newCustomer.phone_c;
+            if (newCustomer.email_c) contactRecord.email_c = newCustomer.email_c;
+            if (newCustomer.address_c) contactRecord.address_c = newCustomer.address_c;
+            
+            // Link contact to customer using lookup relationship
+            contactRecord.customer_c = newCustomer.Id;
+
+            const contactResponse = await apperClient.createRecord('contact_c', { records: [contactRecord] });
+
+            if (contactResponse.success && contactResponse.results && contactResponse.results[0].success) {
+              contactCreated = true;
+              console.info('Contact automatically created for new customer:', newCustomer.Id);
+            } else {
+              contactError = contactResponse.message || (contactResponse.results?.[0]?.message) || 'Unknown contact creation error';
+              console.error('Failed to create contact for customer:', contactError);
+            }
+
+          } catch (error) {
+            contactError = error.message;
+            console.error('Error creating contact for new customer:', error);
+          }
+
+// Send welcome email via Edge function
+          let customerResult = { ...newCustomer, contactCreated, contactError };
+          
+          try {
+            const emailResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
+              body: customerResult,
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (emailResponse.ok) {
+              const emailResult = await emailResponse.json();
+              customerResult.emailStatus = emailResult.success ? 'sent' : 'failed';
+              customerResult.emailMessage = emailResult.message;
+            } else {
+              customerResult.emailStatus = 'failed';
+              customerResult.emailMessage = 'Failed to send welcome email';
+            }
+          } catch (emailError) {
+            console.error('Email sending failed:', emailError);
             customerResult.emailStatus = 'failed';
             customerResult.emailMessage = 'Failed to send welcome email';
           }
-        } catch (emailError) {
-          console.error('Email sending failed:', emailError);
-          // Don't throw error - customer creation should still succeed
-          customerResult.emailStatus = 'failed';
-          customerResult.emailMessage = 'Failed to send welcome email';
-        }
 
-        // Send welcome SMS via Edge function
-        try {
-          const smsResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS, {
-            body: customerResult,
-            headers: {
-              'Content-Type': 'application/json'
+          // Send welcome SMS via Edge function
+          try {
+            const smsResponse = await this.apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS, {
+              body: customerResult,
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (smsResponse.ok) {
+              const smsResult = await smsResponse.json();
+              customerResult.smsStatus = smsResult.smsStatus || (smsResult.success ? 'sent' : 'failed');
+              customerResult.smsMessage = smsResult.smsMessage || smsResult.message;
+            } else {
+              customerResult.smsStatus = 'failed';
+              customerResult.smsMessage = 'Failed to send welcome SMS';
             }
-          });
-
-          if (smsResponse.ok) {
-            const smsResult = await smsResponse.json();
-            // Add SMS status to customer result for UI feedback
-            customerResult.smsStatus = smsResult.smsStatus || (smsResult.success ? 'sent' : 'failed');
-            customerResult.smsMessage = smsResult.smsMessage || smsResult.message;
-          } else {
+          } catch (smsError) {
+            console.info(`apper_info: An error was received in this function: ${import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS}. The error is: ${smsError.message}`);
             customerResult.smsStatus = 'failed';
             customerResult.smsMessage = 'Failed to send welcome SMS';
           }
-        } catch (smsError) {
-          console.info(`apper_info: An error was received in this function: ${import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS}. The error is: ${smsError.message}`);
-          // Don't throw error - customer creation should still succeed
-          customerResult.smsStatus = 'failed';
-          customerResult.smsMessage = 'Failed to send welcome SMS';
-        }
 
-        return customerResult;
+          return customerResult;
+        }
       }
 
-      throw new Error("No response data received");
+      throw new Error('No customer records were created');
     } catch (error) {
-      console.error("Error creating customer:", error);
+      console.error('Error creating customer:', error);
       throw error;
     }
   }
