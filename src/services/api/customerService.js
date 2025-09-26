@@ -165,7 +165,7 @@ try {
             apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
             apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
           });
-          const emailResponse = await ApperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
+const emailResponse = await apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_EMAIL, {
             body: customerResult,
             headers: {
               'Content-Type': 'application/json'
@@ -195,7 +195,7 @@ try {
             apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
             apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
           });
-          const smsResponse = await ApperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS, {
+const smsResponse = await apperClient.functions.invoke(import.meta.env.VITE_SEND_CUSTOMER_WELCOME_SMS, {
             body: customerResult,
             headers: {
               'Content-Type': 'application/json'
