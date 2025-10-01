@@ -135,8 +135,8 @@ class ProductService {
           throw new Error(errorMessage);
         }
 
-        const newProduct = result.data;
-        return {
+const newProduct = result.data;
+        const createdProduct = {
           Id: newProduct.Id,
           name: newProduct.name_c || newProduct.Name || '',
           category: newProduct.category_c || '',
@@ -149,6 +149,20 @@ class ProductService {
           description: newProduct.description_c || '',
           unit: newProduct.unit_c || ''
         };
+
+        // Call webhook Edge Function after successful product creation
+        try {
+          await this.apperClient.functions.invoke(import.meta.env.VITE_WEBHOOK, {
+            body: JSON.stringify(createdProduct),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+        } catch (webhookError) {
+          console.info(`apper_info: An error was received in this function: ${import.meta.env.VITE_WEBHOOK}. The error is: ${webhookError.message}`);
+        }
+        
+        return createdProduct;
       }
 
       throw new Error("No response data received");
